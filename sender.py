@@ -1,5 +1,6 @@
 from LoRa import sx126x
 import time
+import sys
 
 class sender:
     def __init__(self):
@@ -17,7 +18,8 @@ class sender:
         while(True):
             # continuous monitoring users' input key, if it's ESC, quit sending
             print("Start sending... (Press ESC to quit)")
-            if ord(msvcrt.getch()) == 27:
+            c = sys.stdin.read(1)
+            if c == '\x1b': 
                 break
             self.node.send(data)
             time.sleep(1)

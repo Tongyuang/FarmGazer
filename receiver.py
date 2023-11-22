@@ -1,5 +1,5 @@
 from LoRa import sx126x
-
+import sys
 # currently this file is just for test, and it will be used for LoRa and Raspberry pi4B
 
 
@@ -10,9 +10,10 @@ class receiver:
     def receive(self):
         # rotative receive
         while(True):
-            # continuous monitoring users' input key, if it's ESC, quit receiving
             print("Start receiving... (Press ESC to quit)")
-            if ord(msvcrt.getch()) == 27:
+            c = sys.stdin.read(1)
+            # continuous monitoring users' input key, if it's ESC, quit receiving
+            if c == '\x1b': 
                 break
             self.node.receive()
 
