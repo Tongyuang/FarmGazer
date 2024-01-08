@@ -1,0 +1,11 @@
+sx126x:
+  serial_num: "/dev/ttyS0"
+  freq: 915
+  sender_addr: 0
+  receiver_addr: 0
+  # The tramsmit power is {10, 13, 17, and 22} dBm
+  power: 22
+  # RSSI (receive signal strength indicator) is {True or False}
+  rssi: True
+  air_speed: 2400
+  relay: False
