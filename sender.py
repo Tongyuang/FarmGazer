@@ -25,6 +25,8 @@ class sx126x_sender:
         self.MAX_DATA_LENGTH = 90 
         
     def make_bytes_flow(self,bytes_flow_in,receiver_addr=0,sender_addr=0):
+        # return a single bytes flow
+       
         # make smaller lora messages
         assert len(bytes_flow_in) <= self.MAX_DATA_LENGTH
         offset_freq = int(self.sender_freq)-(850 if int(self.sender_freq)>850 else 410)
@@ -38,7 +40,8 @@ class sx126x_sender:
         # concatenate
         return receiver_info_bytes + sender_info_bytes + bytes_flow_in 
     
-    def prepare_bytes_flow(self,bytes_flow_in,receiver_addr=0,sender_addr=0):
+    def make_bytes_flows(self,bytes_flow_in,receiver_addr=0,sender_addr=0):
+        # returns a queue
         # if the bytes flow is too long, split the bytes flow by the self.MAX_DATA_LENGTH
         sender_queue = []
         num_pkg,rmn = len(bytes_flow_in) // self.MAX_DATA_LENGTH, len(bytes_flow_in)%self.MAX_DATA_LENGTH
@@ -54,58 +57,71 @@ class sx126x_sender:
             
         return sender_queue
        
-    
-    def get_str_data_bytes(self,data_in,receiver_addr=0,sender_addr=0):
-
+    def get_str_messages(self,data_in,receiver_addr=0,sender_addr=0):
+        # return list of bytes flow
         data_in_bytes = data_in.encode()
 
-        return self.prepare_bytes_flow(data_in_bytes,receiver_addr,sender_addr)
+        return self.make_bytes_flows(data_in_bytes,receiver_addr,sender_addr)
     
     def send_str_message(self,message="Hello",delay=0.2):
         
-        sender_queue = self.get_str_data_bytes(data_in=message)
-        print(len(sender_queue))
+        sender_queue = self.get_str_messages(data_in=message)
         
         for i in range(len(sender_queue)):
-            print(len(sender_queue[i]))
-            print(sender_queue[i])
             self.node.send(sender_queue[i])
             time.sleep(delay)
     
-    def send_byte_message(self,byte_message_in="",delay=1):
-        receiver_node_addr = 0
-        receiver_node_freq = self.sender_freq
-        sender_queue = self.prepare_bytes_flow(byte_message_in)
+    def send_bytes_message(self,byte_message_in=""):
+        sender_bytes_flow = self.make_bytes_flow(byte_message_in)
+        self.node.send(sender_bytes_flow)
+        
+    def send_bytes_messages(self,byte_message_in="",delay=1):
+        # send multiple messages, delay is the time between two messages
+        sender_queue = self.make_bytes_flows(byte_message_in)
         
         for i in range(len(sender_queue)):
-            print(len(sender_queue[i]))
-            print(sender_queue[i])
             self.node.send(sender_queue[i])
-            time.sleep(delay)
-            
+            if i < len(sender_queue)-1:
+                time.sleep(delay)
+    
+
+        
 class imageSender:
+    @staticmethod
+    def cal_crc(byte_flow):
+        return zlib.crc32(byte_flow)
+    
     def __init__(self,lora_module='sx126x'):
         if lora_module == 'sx126x':
             self.sender = sx126x_sender()
+        else:
+            self.sender = None
     
     def load_image(self,image_path=""):
-        # load image as byte flow
+        # load image as bytes
+        # return bytes
         if not os.path.exists(image_path):
             print('Image not found at addr {}'.format(image_path))
             return
         with open(image_path,"rb") as rf:
-            byte_flow = rf.read()
+            image_bytes = rf.read()
         
-        return byte_flow
+        return image_bytes
+
+    def _make_image_sender_queue(self,image_bytes):
+        # makes a dict for sending
+        
+    def send_image(self,image_path="",delay=1):
+        
         
 if __name__ == "__main__":
     
-    test_image_path = '/home/pi/code/dataset/mnist/testSample/img_1.jpg'
-    image_sender = imageSender()
-    byte_flow = image_sender.load_image(test_image_path)
-    # image_sender.sender.send_byte_message(byte_flow)
-    subflow = byte_flow[1:91]
-    print(zlib.crc32(subflow))
+    # test_image_path = '/home/pi/code/dataset/mnist/testSample/img_1.jpg'
+    # image_sender = imageSender()
+    # byte_flow = image_sender.load_image(test_image_path)
+    # # image_sender.sender.send_byte_message(byte_flow)
+    # subflow = byte_flow[1:91]
+    # print(zlib.crc32(subflow))
     # print(len(byte_flow))
     # print(byte_flow[1])
     # print(len("Hello".encode()))
