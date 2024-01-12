@@ -108,11 +108,16 @@ class imageSender:
         
         return image_bytes
 
-    def _make_image_sender_queue(self,image_bytes):
-        # makes a dict for sending
-        
-    def send_image(self,image_path="",delay=1):
-        
+    def send_image(self,image_path="",delay=1,tag='Image'):
+        sender_queue = self.sender.make_bytes_flows(self.load_image(image_path))
+        sender_queue.insert('tag',0)
+        for i in range(len(sender_queue)):
+            
+            self.sender.node.send(sender_queue[i])
+            # wait for receiver to send back the CRC
+            while()
+            #if i < len(sender_queue)-1:
+                #time.sleep(delay)
         
 if __name__ == "__main__":
     
