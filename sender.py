@@ -1,4 +1,4 @@
-from LoRa import sx126x
+from LoRa import my_sx126x
 import time
 import sys
 import yaml
@@ -12,7 +12,7 @@ class sx126x_sender:
             settings = yaml.safe_load(rf)
         #node = sx126x.sx126x(serial_num = "/dev/ttyS0",freq=868,addr=0,power=22,rssi=True,air_speed=2400,relay=False)
         set_sx126x = settings['sx126x']
-        self.node = sx126x.sx126x(
+        self.node = my_sx126x.Mysx126x(
             serial_num = set_sx126x['serial_num'],
             freq = set_sx126x['freq'],
             addr = set_sx126x['sender_addr'],
@@ -69,7 +69,8 @@ class sx126x_sender:
         
         for i in range(len(sender_queue)):
             self.node.send(sender_queue[i])
-            time.sleep(delay)
+            if i < len(sender_queue)-1:
+                time.sleep(delay)
     
     def send_bytes_message(self,byte_message_in=""):
         sender_bytes_flow = self.make_bytes_flow(byte_message_in)
@@ -108,18 +109,30 @@ class imageSender:
         
         return image_bytes
 
-    def send_image(self,image_path="",delay=1,tag='Image'):
-        sender_queue = self.sender.make_bytes_flows(self.load_image(image_path))
-        sender_queue.insert('tag',0)
-        for i in range(len(sender_queue)):
+    # def send_image(self,image_path="",delay=1,tag='Image'):
+    #     sender_queue = self.sender.make_bytes_flows(self.load_image(image_path))
+    #     sender_queue.insert('tag',0)
+    #     for i in range(len(sender_queue)):
             
-            self.sender.node.send(sender_queue[i])
-            # wait for receiver to send back the CRC
-            while()
+    #         self.sender.node.send(sender_queue[i])
+    #         # wait for receiver to send back the CRC
+    #         while()
             #if i < len(sender_queue)-1:
                 #time.sleep(delay)
         
 if __name__ == "__main__":
+    sender = sx126x_sender()
+    # for i in range(5):
+    #     print(i)
+    #     sender.send_str_message(message="Hello")
+    #     time.sleep(1)
+    
+    while(True):
+        c = str(input())
+        if c == "c":
+            break
+        else:
+            sender.send_str_message(message=c)
     
     # test_image_path = '/home/pi/code/dataset/mnist/testSample/img_1.jpg'
     # image_sender = imageSender()
