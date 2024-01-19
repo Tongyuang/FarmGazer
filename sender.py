@@ -85,13 +85,25 @@ class sx126x_sender:
             if i < len(sender_queue)-1:
                 time.sleep(delay)
     
-
+    def send_bytes_messages_safe(self,byte_message_in=""):
+        sender_queue = self.make_bytes_flows(byte_message_in)
         
-class imageSender:
-    @staticmethod
-    def cal_crc(byte_flow):
-        return zlib.crc32(byte_flow)
-    
+        idx = 0
+        while(idx < len(sender_queue)):
+            msg = sender_queue[idx]
+            self.node.send(msg)
+            while(True):
+                res = self.node.receive()
+                if res['status']:
+                    break
+            # check crc
+            print(res['message'])
+            print(self.node.cal_crc(msg))
+            idx += 1
+            # if idx < len(sender_queue)-1:
+            #     time.sleep(delay)        
+        
+class imageSender:    
     def __init__(self,lora_module='sx126x'):
         if lora_module == 'sx126x':
             self.sender = sx126x_sender()
@@ -116,9 +128,7 @@ class imageSender:
             
     #         self.sender.node.send(sender_queue[i])
     #         # wait for receiver to send back the CRC
-    #         while()
-            #if i < len(sender_queue)-1:
-                #time.sleep(delay)
+            
         
 if __name__ == "__main__":
     sender = sx126x_sender()
