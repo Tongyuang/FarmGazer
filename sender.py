@@ -3,7 +3,7 @@ import time
 import sys
 import yaml
 import os
-import zlib
+
 
 class sx126x_sender:
     def __init__(self):
@@ -56,21 +56,6 @@ class sx126x_sender:
             sender_queue.append(self.make_bytes_flow(sub_bytes_flow,receiver_addr,sender_addr))
             
         return sender_queue
-       
-    def get_str_messages(self,data_in,receiver_addr=0,sender_addr=0):
-        # return list of bytes flow
-        data_in_bytes = data_in.encode()
-
-        return self.make_bytes_flows(data_in_bytes,receiver_addr,sender_addr)
-    
-    def send_str_message(self,message="Hello",delay=0.2):
-        
-        sender_queue = self.get_str_messages(data_in=message)
-        
-        for i in range(len(sender_queue)):
-            self.node.send(sender_queue[i])
-            if i < len(sender_queue)-1:
-                time.sleep(delay)
     
     def send_bytes_message(self,byte_message_in=""):
         sender_bytes_flow = self.make_bytes_flow(byte_message_in)
@@ -89,20 +74,40 @@ class sx126x_sender:
         sender_queue = self.make_bytes_flows(byte_message_in)
         
         idx = 0
+        
         while(idx < len(sender_queue)):
             msg = sender_queue[idx]
             self.node.send(msg)
+            print('sending idx {}'.format(idx))
             while(True):
                 res = self.node.receive()
                 if res['status']:
                     break
+            # original message in bytes
+            original_msg_bytes = msg[6:]
             # check crc
-            print(res['message'])
-            print(self.node.cal_crc(msg))
-            idx += 1
-            # if idx < len(sender_queue)-1:
-            #     time.sleep(delay)        
+            ret_crc = int(res['message'].decode('utf-8'))
+            send_crc = self.node.cal_crc(original_msg_bytes)
+            if send_crc != ret_crc:
+                print('recending idx {}'.format(idx))
+            else:
+                idx += 1 
+        print('finished.')
+    
+    def get_str_messages(self,data_in,receiver_addr=0,sender_addr=0):
+        # return list of bytes flow
+        data_in_bytes = data_in.encode('utf-8')
+
+        return self.make_bytes_flows(data_in_bytes,receiver_addr,sender_addr)
+    
+    def send_str_message(self,message="Hello",delay=0.2,safe=False):
         
+        message_bytes = message.encode('utf-8')
+        if not safe:
+            self.send_bytes_messages(message_bytes,delay)
+        else:
+            self.send_bytes_messages_safe(message_bytes)
+     
 class imageSender:    
     def __init__(self,lora_module='sx126x'):
         if lora_module == 'sx126x':
@@ -142,7 +147,7 @@ if __name__ == "__main__":
         if c == "c":
             break
         else:
-            sender.send_str_message(message=c)
+            sender.send_str_message(message=c,safe=True)
     
     # test_image_path = '/home/pi/code/dataset/mnist/testSample/img_1.jpg'
     # image_sender = imageSender()

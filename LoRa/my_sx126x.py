@@ -1,6 +1,20 @@
 from .sx126x import sx126x
+import zlib
+import RPi.GPIO as GPIO
+import serial
+import time
 
 class Mysx126x(sx126x):
+    
+    def cal_crc(self, data):
+        return zlib.crc32(data)
+    
+    def send(self,data,delay=0.1):
+        GPIO.output(self.M1,GPIO.LOW)
+        GPIO.output(self.M0,GPIO.LOW)
+        time.sleep(delay)
+
+        self.ser.write(data)
     
     def receive(self,receive_sleep=0.5):
         # return status,message, rssi
