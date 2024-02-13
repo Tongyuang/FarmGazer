@@ -3,6 +3,7 @@ import time
 import sys
 import yaml
 import os
+import struct
 
 
 class sx126x_sender:
@@ -40,18 +41,29 @@ class sx126x_sender:
         # concatenate
         return receiver_info_bytes + sender_info_bytes + bytes_flow_in 
     
-    def make_bytes_flows(self,bytes_flow_in,receiver_addr=0,sender_addr=0):
+    def make_bytes_flows(self,bytes_flow_in,make_idx = False, receiver_addr=0,sender_addr=0):
         # returns a queue
         # if the bytes flow is too long, split the bytes flow by the self.MAX_DATA_LENGTH
+        # if make_idx equals true, all the sub_messages will be added a index with idx_length=2
         sender_queue = []
-        num_pkg,rmn = len(bytes_flow_in) // self.MAX_DATA_LENGTH, len(bytes_flow_in)%self.MAX_DATA_LENGTH
+        
+        data_length = self.MAX_DATA_LENGTH if not make_idx else self.MAX_DATA_LENGTH - 2
+        
+        num_pkg,rmn = len(bytes_flow_in) // data_length, len(bytes_flow_in)%data_length
         if rmn != 0:
             num_pkg += 1
         for i in range(num_pkg):
             if i != num_pkg-1:
-                sub_bytes_flow = bytes_flow_in[i*self.MAX_DATA_LENGTH : (i+1)*self.MAX_DATA_LENGTH]
+                if make_idx: # add a idx
+                    idx_bytes = struct.pack('H',i)
+                    sub_bytes_flow = idx_bytes + bytes_flow_in[i*data_length : (i+1)*data_length]
+                else:
+                    sub_bytes_flow = bytes_flow_in[i*data_length : (i+1)*data_length]
             else:
-                sub_bytes_flow = bytes_flow_in[i*self.MAX_DATA_LENGTH:]
+                if make_idx: # add a idx
+                    sub_bytes_flow = struct.pack('H',i) + bytes_flow_in[i*self.MAX_DATA_LENGTH:]
+                else:
+                    sub_bytes_flow = bytes_flow_in[i*self.MAX_DATA_LENGTH:]
             
             sender_queue.append(self.make_bytes_flow(sub_bytes_flow,receiver_addr,sender_addr))
             
@@ -70,11 +82,9 @@ class sx126x_sender:
             if i < len(sender_queue)-1:
                 time.sleep(delay)
     
-    def send_bytes_messages_safe(self,byte_message_in=""):
-        sender_queue = self.make_bytes_flows(byte_message_in)
-        
+    def send_bytes_messages_safe(self,byte_message_in="",make_idx=False):
+        sender_queue = self.make_bytes_flows(byte_message_in,make_idx=make_idx)
         idx = 0
-        
         while(idx < len(sender_queue)):
             msg = sender_queue[idx]
             self.node.send(msg)
@@ -126,31 +136,18 @@ class imageSender:
         
         return image_bytes
 
-    # def send_image(self,image_path="",delay=1,tag='Image'):
-    #     sender_queue = self.sender.make_bytes_flows(self.load_image(image_path))
-    #     sender_queue.insert('tag',0)
-    #     for i in range(len(sender_queue)):
-            
-    #         self.sender.node.send(sender_queue[i])
-    #         # wait for receiver to send back the CRC
+    def send_image(self,image_path="",tag='Image'):
+        image_bytes_flow = self.load_image(image_path)
+        #sender_queue = self.sender.make_bytes_flows()
+        bytes_flow = image_bytes_flow
+        self.sender.send_bytes_messages_safe(bytes_flow,make_idx = True)
+        
             
         
 if __name__ == "__main__":
-    sender = sx126x_sender()
-    # for i in range(5):
-    #     print(i)
-    #     sender.send_str_message(message="Hello")
-    #     time.sleep(1)
-    
-    while(True):
-        c = str(input())
-        if c == "c":
-            break
-        else:
-            sender.send_str_message(message=c,safe=True)
-    
-    # test_image_path = '/home/pi/code/dataset/mnist/testSample/img_1.jpg'
-    # image_sender = imageSender()
+    test_image_path = '/home/pi/code/dataset/mnist/testSample/img_1.jpg'
+    image_sender = imageSender()
+    image_sender.send_image(test_image_path)
     # byte_flow = image_sender.load_image(test_image_path)
     # # image_sender.sender.send_byte_message(byte_flow)
     # subflow = byte_flow[1:91]

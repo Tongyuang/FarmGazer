@@ -10,7 +10,7 @@ class receiver:
         self.sender = sx126x_sender()
         self.node = self.sender.node
         
-    def receive(self):
+    def rot_receive(self):
         # rotative receive
         print("Start receiving... (Press ESC to quit)")
         while(True):
@@ -29,4 +29,4 @@ class receiver:
 
 if __name__ == "__main__":
     receiver = receiver()
-    receiver.receive()
+    receiver.rot_receive()
