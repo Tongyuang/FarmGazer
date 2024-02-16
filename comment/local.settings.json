@@ -1,0 +1,16 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=farmgazer87d6;AccountKey=TTKQ/+1M3EgY/kvlESqJAGUJ45AK/fK+RIZKOaLB4yxRmijiIYVPmIGsvh2RQ/A77c10RYBzgNru+AStUYDU6A==;EndpointSuffix=core.windows.net",
+    "HOST": "https://farmgazer.documents.azure.com:443/",
+    "MASTER_KEY": "XWH8TQ89nD6U54csShewhfUH5D5TYufm72PzKySDPoVVTCWER6DwPHXcon6P20d6fF3zE3IsZ0LsACDbTRH8Ww==",
+    "DATABASE_ID": "FarmGazerDB",
+    "CONTAINER_ID": "Comment",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=cfbfdbd3-2d73-4b43-b676-f3d240260cc9;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/",
+    "FUNCTIONS_EXTENSION_VERSION": "~4",
+    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "DefaultEndpointsProtocol=https;AccountName=farmgazer87d6;AccountKey=TTKQ/+1M3EgY/kvlESqJAGUJ45AK/fK+RIZKOaLB4yxRmijiIYVPmIGsvh2RQ/A77c10RYBzgNru+AStUYDU6A==;EndpointSuffix=core.windows.net",
+    "WEBSITE_CONTENTSHARE": "farmgazer9110",
+    "CosmosDbConnectionString": "AccountEndpoint=https://farmgazer.documents.azure.com:443/;AccountKey=XWH8TQ89nD6U54csShewhfUH5D5TYufm72PzKySDPoVVTCWER6DwPHXcon6P20d6fF3zE3IsZ0LsACDbTRH8Ww=="
+  }
+}
