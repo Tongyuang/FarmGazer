@@ -1,0 +1,3 @@
+[submodule "FarmGazer_Camera"]
+	path = FarmGazer_Camera
+	url = git@github.com:Tongyuang/FarmGazer_Camera.git
