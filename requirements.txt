@@ -1,0 +1,4 @@
+azure_storage==0.37.0
+Flask==2.2.2
+numpy==1.20.1
+picamera==1.13
