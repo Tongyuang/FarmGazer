@@ -62,7 +62,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 Your Name - yusam12tw48@gmail.com
 
 
-
-```
-
-Feel free to adjust the sections above to match your app's features and your project guidelines more closely. This template aims to give you a solid starting point, including essential sections that most projects will benefit from having in their `README.md`.
