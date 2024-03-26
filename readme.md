@@ -1,5 +1,3 @@
-Creating a `README.md` file for your FarmGazer app can be an excellent way to introduce the project, guide users through the installation process, and provide an overview of the app’s features, technologies used, and any other relevant information. Here's a structured template you can adapt and expand based on your app's specifics:
-
 ```markdown
 # FarmGazer App
 
