@@ -1,4 +1,3 @@
-```markdown
 # FarmGazer App
 
 Welcome to the FarmGazer App repository! FarmGazer is an innovative application designed to bring cutting-edge agricultural insights directly to your fingertips. With FarmGazer, farmers, agricultural professionals, and hobbyists can easily monitor and manage their farming operations more efficiently.
@@ -15,7 +14,7 @@ To get a local copy up and running, follow these simple steps.
 
 ### Prerequisites
 
-Before installing FarmGazer, ensure you have [Node.js](https://nodejs.org/en/download/) installed on your machine. This project uses `npm` as a package manager.
+Before you install FarmGazer, please make sure you have [Node.js](https://nodejs.org/en/download/) installed on your machine. This project uses `npm` as a package manager.
 
 ### Installation
 
