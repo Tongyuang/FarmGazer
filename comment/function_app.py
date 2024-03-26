@@ -5,7 +5,6 @@ from datetime import datetime
 
 app = func.FunctionApp()
 
-
 @app.function_name(name="HttpTrigger1")
 @app.route(route="comment", auth_level=func.AuthLevel.ANONYMOUS)
 @app.cosmos_db_input(arg_name="documents", 
