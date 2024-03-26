@@ -30,7 +30,7 @@ git pull
 2. Navigate to the FarmGazerAPP directory:
 
 ```bash
-cd FarmGazerAPP
+cd FarmGazer
 ```
 
 3. Install NPM packages:
